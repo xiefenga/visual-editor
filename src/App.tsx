@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import AppContext from './store'
 import WidgetList from './components/WidgetList'
 import WidgetEditor from './components/WidgetEditor'
+import { WIDGET_LIST } from './config'
 
 const AppContainer = styled.div`
 width: 100vw;
@@ -12,11 +13,11 @@ display: flex;
 
 const App = () => {
 
-  const list = [{ id: "1", name: 'faadf' }, { id: "2", name: 'fafas' }]
-
   const widgetRef = useRef<any>(null)
 
-  const setWidget = (widget: any) => { widgetRef.current = widget }
+  const setWidget = (widget: any) => {
+    widgetRef.current = widget
+  }
 
   const getWidget = () => widgetRef.current
 
@@ -25,9 +26,10 @@ const App = () => {
     setWidget,
   }
 
+
   return (<AppContext.Provider value={store}>
     <AppContainer>
-      <WidgetList list={list} />
+      <WidgetList list={WIDGET_LIST} />
       <WidgetEditor />
     </AppContainer>
   </AppContext.Provider >

@@ -1,5 +1,6 @@
 import { Rnd } from 'react-rnd'
 import styled from 'styled-components'
+import ECharts from 'echarts-for-react'
 import { useState, useContext, useRef, FC, DragEvent } from 'react'
 import AppContext from '../store'
 
@@ -36,9 +37,27 @@ const WidgetItem = styled.div<WidgetProps>`
     transform: translate(${props => -props.offset.x}px, ${props => -props.offset.y}px);
 `
 
+const option = {
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            data: [150, 230, 224, 218, 135, 147, 260],
+            type: 'line'
+        }
+    ]
+}
+
 const preventDefault = (e: DragEvent<HTMLDivElement>) => e.preventDefault()
 
 const WidgetEditor: FC = () => {
+
+    console.log('WidgetEditor')
 
     const [widgetList, setWidgetList] = useState<any[]>([])
 
@@ -49,13 +68,11 @@ const WidgetEditor: FC = () => {
     const onDrop = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         const { left, top } = editorRef.current!.getBoundingClientRect()
-        const { offsetX, offsetY, clientX, clientY } = e.nativeEvent
-        // console.log(left, top)
-        // console.log(offsetX, offsetY)
-        // console.log(clientX - left, clientY - top)
+        const { clientX, clientY } = e.nativeEvent
 
-        // 处理 drop 到 widget 导致 offset 不正确
-        setWidgetList(() => [...widgetList.concat({ ...getWidget(), position: { x: clientX - left, y: clientY - top } } ?? [])])
+        // 处理 drop 到 widget 上导致 offset 不正确
+        const position = { x: clientX - left, y: clientY - top }
+        setWidgetList(() => [...widgetList.concat({ ...getWidget(), position } ?? [])])
     }
 
     return (<EditorContainer
@@ -70,13 +87,12 @@ const WidgetEditor: FC = () => {
                 bounds="parent"
                 style={{ border: '1px solid #ccc' }}
                 default={{
-                    width: 100,
-                    height: 100,
+                    ...widget.default,
                     x: widget.position.x - widget.offset.x,
                     y: widget.position.y - widget.offset.y
                 }}
             >
-                {widget.name}
+                <ECharts style={{ height: '100%' }} option={widget.example ?? option} notMerge />
             </Rnd>
         ))}
     </EditorContainer>)

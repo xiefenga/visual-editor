@@ -1,25 +1,31 @@
 import { FC, useContext } from 'react'
 import styled from 'styled-components'
+import ECharts from 'echarts-for-react'
 import AppContext from '../store'
 
 const WidgetBox = styled.div`
     width: 20%;
-    height: 100%;
+    width: 250px;
+    height: 120%;
+    overflow: auto;
+    box-sizing: border-box;
+    background-color: lightblue;
 `
 
 const WidgetItem = styled.li`
-    width: 100px;
-    height: 100px;
-    padding: 10px;
+    width: 200px;
+    height: 150px;
     cursor: pointer;
     list-style: none;
     border: 1px solid #aaa;
     box-sizing: border-box;
+    margin: 0 auto;
 `
 
 type Widget = {
-    id: string
-    name: string
+    type: string,
+    example: object
+    show: string
 }
 
 interface WidgetListProps {
@@ -30,16 +36,18 @@ const WidgetList: FC<WidgetListProps> = (props) => {
     const { list } = props
     const { setWidget } = useContext(AppContext)
 
+    console.log('WidgetList')
+
     return (<WidgetBox>
         {list.map((widget) => (
             <WidgetItem
                 draggable
-                key={widget.id}
+                key={widget.type}
                 onDragStart={(e) => {
                     const { offsetX, offsetY } = e.nativeEvent
                     setWidget({
                         ...widget,
-                        id: `${widget.id}_${Date.now()}`,
+                        id: `${widget.type}_${Date.now()}`,
                         offset: {
                             x: offsetX,
                             y: offsetY
@@ -48,7 +56,11 @@ const WidgetList: FC<WidgetListProps> = (props) => {
                 }}
                 onDragEnd={() => setWidget(null)}
             >
-                {widget.name}
+                <p style={{ margin: '0', height: '20px' }}>{widget.type}</p>
+                {/* <div style={{ height: 'calc(100% - 20px)', overflow: 'hidden' }}> */}
+                {/* <img style={{ width: '100%', objectFit: 'cover' }} src={widget.show} /> */}
+                {/* <ECharts style={{ height: '100%' }} option={widget.example} /> */}
+                {/* </div> */}
             </WidgetItem>
         ))}
     </WidgetBox >)
